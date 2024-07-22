@@ -2,6 +2,8 @@ import discord
 import sqlite3
 import os
 from dotenv import load_dotenv
+from datetime import datetime
+
 
 # 加載 .env 文件
 load_dotenv()
@@ -20,7 +22,8 @@ c.execute('''CREATE TABLE IF NOT EXISTS chat_logs
                 user TEXT, 
                 message TEXT, 
                 file_path TEXT,
-                file_type TEXT)''')
+                file_type TEXT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
 
 # 創建 intents 實例
 intents = discord.Intents.default()
@@ -46,8 +49,11 @@ async def on_message(message):
 
     if message.attachments:
         for attachment in message.attachments:
-            # 下載檔案
-            file_path = os.path.join(DOWNLOAD_FOLDER, attachment.filename)
+            # 下載檔案，並在檔名後添加當前日期
+            current_date = datetime.now().strftime('%Y%m%d')  # 格式化日期
+            file_name, file_extension = os.path.splitext(attachment.filename)
+            new_file_name = f"{file_name}_{current_date}{file_extension}"
+            file_path = os.path.join(DOWNLOAD_FOLDER, new_file_name)
             await attachment.save(file_path)
 
             # 獲取檔案類型
