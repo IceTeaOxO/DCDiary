@@ -4,7 +4,6 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
-
 # 加載 .env 文件
 load_dotenv()
 
@@ -16,13 +15,14 @@ DOWNLOAD_FOLDER = 'attachments'
 conn = sqlite3.connect('chat_history.db')
 c = conn.cursor()
 
-# 建立聊天記錄表格，擴展以支持不同類型的檔案
+# 建立聊天記錄表格，新增 location 欄位
 c.execute('''CREATE TABLE IF NOT EXISTS chat_logs
                (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 user TEXT, 
                 message TEXT, 
                 file_path TEXT,
                 file_type TEXT,
+                location TEXT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)''')
 
 # 創建 intents 實例
@@ -47,6 +47,9 @@ async def on_message(message):
     if not os.path.exists(DOWNLOAD_FOLDER):
         os.makedirs(DOWNLOAD_FOLDER)
 
+    # 獲取群組或頻道名稱
+    location = str(message.channel)  # 獲取頻道名稱
+
     if message.attachments:
         for attachment in message.attachments:
             # 下載檔案，並在檔名後添加當前日期
@@ -60,15 +63,15 @@ async def on_message(message):
             file_type = attachment.content_type if attachment.content_type else 'unknown'
 
             # 將聊天記錄和檔案路徑插入資料庫
-            c.execute("INSERT INTO chat_logs (user, message, file_path, file_type) VALUES (?, ?, ?, ?)", 
-                      (str(message.author), message.content, file_path, file_type))
+            c.execute("INSERT INTO chat_logs (user, message, file_path, file_type, location) VALUES (?, ?, ?, ?, ?)", 
+                      (str(message.author), message.content, file_path, file_type, location))
             conn.commit()
-            print(f"Message from {message.author}: {message.content} with file {file_path} of type {file_type}")
+            print(f"Message from {message.author}: {message.content} with file {file_path} of type {file_type} from {location}")
     else:
         # 將聊天記錄插入資料庫
-        c.execute("INSERT INTO chat_logs (user, message, file_path, file_type) VALUES (?, ?, ?, ?)",
-                  (str(message.author), message.content, None, None))
+        c.execute("INSERT INTO chat_logs (user, message, file_path, file_type, location) VALUES (?, ?, ?, ?, ?)",
+                  (str(message.author), message.content, None, None, location))
         conn.commit()
-        print(f"Message from {message.author}: {message.content}")
+        print(f"Message from {message.author}: {message.content} from {location}")
 
 client.run(TOKEN)
