@@ -130,3 +130,4 @@ async def handle_ollama_response(url, question, channel):
 
 
 client.run(TOKEN)
+# Shard ID None heartbeat blocked for more than 20 seconds.
