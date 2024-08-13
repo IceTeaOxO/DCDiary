@@ -3,7 +3,8 @@ import sqlite3
 import os
 from dotenv import load_dotenv
 from datetime import datetime
-import ollama
+# import ollama
+import requests
 
 # 加載 .env 文件
 load_dotenv()
@@ -11,6 +12,7 @@ load_dotenv()
 # 從環境變量中讀取 TOKEN
 TOKEN = os.getenv("DISCORD_TOKEN")
 DOWNLOAD_FOLDER = 'attachments'
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/chat")
 
 # 連接到SQLite資料庫
 conn = sqlite3.connect('chat_history.db')
@@ -78,28 +80,27 @@ async def on_message(message):
 
     if message.content.startswith("/t "):
         question = message.content[3:]  # 獲取指令後的問題
-        response = ollama.chat(
-            model="gemma2",
-            messages=[
+        response = requests.post(OLLAMA_URL, json={
+            "model": "gemma2",
+            "messages": [
                 {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音："+question}
-            ],
-            stream=False
-        )
+            ]
+        }).json()
 
         # 發送回覆到當前聊天頻道
         await message.channel.send(response['content'])
 
     if message.content.startswith("/c "):
         question = message.content[3:]  # 獲取指令後的問題
-        response = ollama.chat(
-            model="gemma2",
-            messages=[
+        response = requests.post(OLLAMA_URL, json={
+            "model": "gemma2",
+            "messages": [
                 {"role": "user", "content": question}
-            ],
-            stream=False
-        )
+            ]
+        }).json()
 
         # 發送回覆到當前聊天頻道
         await message.channel.send(response['content'])
+
 
 client.run(TOKEN)
