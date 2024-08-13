@@ -96,7 +96,7 @@ async def handle_ollama_response(url, question, channel):
     response = requests.post(url, json={
         "model": "gemma2:2b",
         "messages": [
-            {"role": "user", "content": question}
+            {"role": "user", "content": "請使用繁體中文回答以下問題："+question}
         ]
     }, stream=True, timeout=60)
 
