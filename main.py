@@ -89,7 +89,7 @@ async def on_message(message):
             "messages": [
                 {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音，除此之外不要給我其他資訊：" + question}
             ]
-        }, stream=True)
+        }, stream=False)
 
         # 檢查響應狀態碼
         if response.status_code == 200:
