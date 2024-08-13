@@ -84,7 +84,7 @@ async def on_message(message):
 
     if message.content.startswith("/t "):
         question = message.content[3:]  # 獲取指令後的問題
-        await handle_ollama_response(OLLAMA_URL, "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音，盡可能使用繁體中文回答，除此之外不要給我其他資訊：" + question, message.channel)
+        await handle_ollama_response(OLLAMA_URL, "請將下列的句子翻譯成意思相同的英文句子、日文句子以及日文句子的發音，其他字詞使用繁體中文回答，除此之外不要給我其他資訊：" + question, message.channel)
 
     if message.content.startswith("/c "):
         question = message.content[3:]  # 獲取指令後的問題
