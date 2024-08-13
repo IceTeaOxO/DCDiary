@@ -3,6 +3,7 @@ import sqlite3
 import os
 from dotenv import load_dotenv
 from datetime import datetime
+import ollama
 
 # 加載 .env 文件
 load_dotenv()
@@ -73,5 +74,32 @@ async def on_message(message):
                   (str(message.author), message.content, None, None, location))
         conn.commit()
         print(f"Message from {message.author}: {message.content} from {location}")
+        # 處理指令
+
+    if message.content.startswith("/t "):
+        question = message.content[3:]  # 獲取指令後的問題
+        response = ollama.chat(
+            model="gemma2",
+            messages=[
+                {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音："+question}
+            ],
+            stream=False
+        )
+
+        # 發送回覆到當前聊天頻道
+        await message.channel.send(response['content'])
+
+    if message.content.startswith("/c "):
+        question = message.content[3:]  # 獲取指令後的問題
+        response = ollama.chat(
+            model="gemma2",
+            messages=[
+                {"role": "user", "content": question}
+            ],
+            stream=False
+        )
+
+        # 發送回覆到當前聊天頻道
+        await message.channel.send(response['content'])
 
 client.run(TOKEN)
