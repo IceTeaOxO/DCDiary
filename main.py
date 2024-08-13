@@ -84,18 +84,7 @@ async def on_message(message):
 
     if message.content.startswith("/t "):
         question = message.content[3:]  # 獲取指令後的問題
-        response = requests.post(OLLAMA_URL, json={
-            "model": "gemma2:2b",
-            "messages": [
-                {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音，除此之外不要給我其他資訊：" + question}
-            ]
-        }, stream=False)
-
-        # 檢查響應狀態碼
-        if response.status_code == 200:
-            messages = response.json()['messages']  # 獲取回應中的消息
-            
-        await message.channel.send(messages[0]['content'])
+        await handle_ollama_response(OLLAMA_URL, "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音，盡可能使用繁體中文回答，除此之外不要給我其他資訊：" + question, message.channel)
 
     if message.content.startswith("/c "):
         question = message.content[3:]  # 獲取指令後的問題
@@ -137,15 +126,6 @@ async def handle_ollama_response(url, question, channel):
             await channel.send(full_message)
     else:
         await channel.send("無法獲取響應，請稍後再試。")
-
-    # 合併所有內容並發送
-    full_message = ''.join(messages)
-    if len(full_message) > 2000:
-        # 如果消息太長，則分割發送
-        for i in range(0, len(full_message), 2000):
-            await channel.send(full_message[i:i + 2000])
-    else:
-        await channel.send(full_message)
 
 
 
