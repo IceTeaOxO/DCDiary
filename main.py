@@ -78,29 +78,29 @@ async def on_message(message):
         print(f"Message from {message.author}: {message.content} from {location}")
         # 處理指令
 
-    if message.content.startswith("/t "):
-        question = message.content[3:]  # 獲取指令後的問題
-        response = requests.post(OLLAMA_URL, json={
-            "model": "gemma2",
-            "messages": [
-                {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音："+question}
-            ]
-        }).json()
+    # if message.content.startswith("/t "):
+    #     question = message.content[3:]  # 獲取指令後的問題
+    #     response = requests.post(OLLAMA_URL, json={
+    #         "model": "gemma2:2b",
+    #         "messages": [
+    #             {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音："+question}
+    #         ]
+    #     }).json()
 
-        # 發送回覆到當前聊天頻道
-        await message.channel.send(response['content'])
+    #     # 發送回覆到當前聊天頻道
+    #     await message.channel.send(response)
 
-    if message.content.startswith("/c "):
-        question = message.content[3:]  # 獲取指令後的問題
-        response = requests.post(OLLAMA_URL, json={
-            "model": "gemma2",
-            "messages": [
-                {"role": "user", "content": question}
-            ]
-        }).json()
+    # if message.content.startswith("/c "):
+    #     question = message.content[3:]  # 獲取指令後的問題
+    #     response = requests.post(OLLAMA_URL, json={
+    #         "model": "gemma2:2b",
+    #         "messages": [
+    #             {"role": "user", "content": question}
+    #         ]
+    #     }).json()
 
-        # 發送回覆到當前聊天頻道
-        await message.channel.send(response['content'])
+    #     # 發送回覆到當前聊天頻道
+    #     await message.channel.send(response)
 
 
 client.run(TOKEN)
