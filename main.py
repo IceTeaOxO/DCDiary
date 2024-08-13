@@ -42,6 +42,7 @@ client = discord.Client(intents=intents)
 
 @client.event
 async def on_ready():
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(name="gemma2:2b"))
     print(f'{client.user.name} has connected to Discord!')
 
 @client.event
@@ -97,7 +98,7 @@ async def handle_ollama_response(url, question, channel):
         "messages": [
             {"role": "user", "content": question}
         ]
-    }, stream=True)
+    }, stream=True, timeout=60)
 
     # 檢查響應狀態碼
     if response.status_code == 200:
@@ -129,4 +130,4 @@ async def handle_ollama_response(url, question, channel):
 
 
 
-client.run(TOKEN, heartbeat_timeout=60)
+client.run(TOKEN)
