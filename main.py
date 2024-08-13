@@ -12,7 +12,7 @@ load_dotenv()
 # 從環境變量中讀取 TOKEN
 TOKEN = os.getenv("DISCORD_TOKEN")
 DOWNLOAD_FOLDER = 'attachments'
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/chat")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat")
 
 # 連接到SQLite資料庫
 conn = sqlite3.connect('chat_history.db')
@@ -86,7 +86,6 @@ async def on_message(message):
                 {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音："+question}
             ]
         }).json()
-        print(response.text)
 
         # 發送回覆到當前聊天頻道
         await message.channel.send(response['content'])
