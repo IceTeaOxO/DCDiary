@@ -86,6 +86,7 @@ async def on_message(message):
                 {"role": "user", "content": "請將下列的句子翻譯成意思相同的英文和日文句子，日文請標註發音："+question}
             ]
         }).json()
+        print(response.text)
 
         # 發送回覆到當前聊天頻道
         await message.channel.send(response['content'])
